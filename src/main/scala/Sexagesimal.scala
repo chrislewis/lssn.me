@@ -1,8 +1,9 @@
 package lssn
 
 /**
- * http://tantek.pbworks.com/w/page/19402946/NewBase60
- * Tantek Çelik http://tantek.com
+ * Functions for Decimal => Sexagesimal / Sexagesimal => Decimal conversions.
+ * Sexagesimal is a simple base 60 number system.
+ * @see http://tantek.pbworks.com/w/page/19402946/NewBase60 (Tantek Çelik http://tantek.com)
  */
 object Sexagesimal {
   val SXG_CHARS = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ_abcdefghijkmnopqrstuvwxyz"
