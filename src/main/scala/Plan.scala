@@ -40,9 +40,9 @@ class Plan extends unfiltered.filter.Plan {
         val shortUrl = 
           ShortUrl find {
             ShortUrl.url === url
-          } match {
-            case Nil      => ShortUrl.put(ShortUrl(None, url, 0, new java.util.Date))
-            case u :: Nil => u
+          } headOption match {
+            case None     => ShortUrl.put(ShortUrl(None, url, 0, new java.util.Date))
+            case Some(u)  => u
           }
           
         val sxgId = shortUrl.key.map { k =>
@@ -54,7 +54,7 @@ class Plan extends unfiltered.filter.Plan {
       
       expected(params) orFail { fails =>
         BadRequest ~> Json(
-          decompose(fails map { fail => fail.name + ":" + fail.error } mkString ",")
+          decompose(fails map { f => f.name + ": " + f.error })
         )
       }
     }
