@@ -1,6 +1,39 @@
 
+body, input {
+  font-family: Helvetica, sans-serif;
+  color: ##525252;
+  font-size: 14px;
+}
 
 #body {
-  width: 300px;
+  width: 400px;
   margin: 0px auto;
+}
+
+input {
+  font-size: 18px;
+}
+
+h1 {
+  margin: 0px;
+  font-size: 65px;
+}
+
+#shortened a, #shortened a:visited {
+  color: #03AAFF;
+  text-decoration: none;
+}
+
+a, a:visited {
+  color: #03AAFF;
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: none;
+  padding: 5px;
+}
+
+li {
+  line-height: 1.3em;
 }

@@ -8,10 +8,20 @@
   </head>
   <body>
     <div id="body">
-      <form id="lssn" action="/shrink" method="post">
+      <div id="msg"></div>
+      <h1>lssn.<span>me</span></h1>
+      <form id="lssn" action="/lessen" method="post">
         <input type="text" name="url" id="url" placeholder="Lessen this link"/>
         <input type="submit" value="Lessen"/>
       </form>
+      <div id="results">
+        <ul id="shortened"></ul>
+      </div>
+      <div id="footer">
+        Want a feature?
+        <a href="http://github.com/chrislewis/lssn.me">Add it</a> or
+        <a href="http://github.com/chrislewis/lssn.me/issues">request it</a>.
+      </div>
     </div>
   </body>
 </html>

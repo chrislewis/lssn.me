@@ -1,5 +1,7 @@
 package lssn
 
+import response._
+
 import unfiltered.request._
 import unfiltered.response._
 import QParams._
@@ -7,28 +9,39 @@ import QParams._
 import highchair.meta.FilterOps._
 import com.google.appengine.api.datastore.DatastoreServiceFactory
 
+import net.liftweb.json._
+import Extraction.decompose
+import net.liftweb.json.JsonDSL._
+import net.liftweb.json.JsonAST._
+
 /** unfiltered plan */
 class Plan extends unfiltered.filter.Plan {
   
+  implicit val formats = net.liftweb.json.DefaultFormats
   implicit val dss = DatastoreServiceFactory.getDatastoreService
   
-  val URL = """\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]""".r
-  
-  def intent = {
+  object Validation {
+    val URL = """\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]""".r
     
-    case POST(Path("/shrink", Params(params, _))) => {
-      val expected = for {
+    def shrink[A](valid: String => A) =
+      for {
         url <- lookup("url")
           .is(required("URL is required."))
           .is(pred
             { s:String => !URL.unapplySeq(s).isEmpty }
             { s => "%s is not a valid URL.".format(s) })
-      } yield {
+      } yield valid(url.get)
+  }
+  
+  def intent = {
+    
+    case POST(Path("/lessen", Params(params, r))) => {
+      val expected = Validation.shrink { url =>
         val shortUrl = 
           ShortUrl find {
-            ShortUrl.url === url.get
+            ShortUrl.url === url
           } match {
-            case Nil      => ShortUrl.put(ShortUrl(None, url.get, 0, new java.util.Date))
+            case Nil      => ShortUrl.put(ShortUrl(None, url, 0, new java.util.Date))
             case u :: Nil => u
           }
           
@@ -36,15 +49,14 @@ class Plan extends unfiltered.filter.Plan {
           Sexagesimal.toSxg(k.getId)
         } getOrElse(error("Failed"))
         
-        ResponseString(sxgId)
+        Json(decompose(Map(("shortUrl" -> sxgId))))
       }
       
       expected(params) orFail { fails =>
-        BadRequest ~> ResponseString(
-          fails map { fail => fail.name + ":" + fail.error } mkString ","
+        BadRequest ~> Json(
+          decompose(fails map { fail => fail.name + ":" + fail.error } mkString ",")
         )
       }
-      
     }
     
     case Path(Seg(x :: Nil), _) => {
